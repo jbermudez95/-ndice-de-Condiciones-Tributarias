@@ -1,7 +1,7 @@
 #Nombre:        isre.R
-#DescripciÛn:   EstimaciÛn del Indicador de Condiciones Tributarias para Honduras (ICT)
-#Elaborado por: Jose Carlo Berm˙dez
-#InstituciÛn:   Servicio de AdministraciÛn de Rentas, Departamento de Estudios Fiscales y EconÛmicos
+#Descripci√≥n:   Estimaci√≥n del Indicador de Condiciones Tributarias para Honduras (ICT)
+#Elaborado por: Jose Carlo Berm√∫dez
+#Instituci√≥n:   Servicio de Administraci√≥n de Rentas, Departamento de Estudios Fiscales y Econ√≥micos
 #Modificado:    23/7/2021
 
 library(ggplot2)
@@ -22,14 +22,14 @@ library(zoo)
 library(forecast)
 
 #===========================================
-#       PreparaciÛn de los Datos
+#       Preparaci√≥n de los Datos
 #===========================================
 
 setwd("C:/Users/Owner/Desktop/2021/Notas t√©cnicas y papers/Indicador de recaudaci√≥n/estimaciones/isre")
 output <- paste0("C:/Users/Owner/Desktop/2021/Notas t√©cnicas y papers/Indicador de recaudaci√≥n/estimaciones")
 data   <- read_excel("data_isre.xlsx")
 
-#Convirtiendo a Lempiras variables medidas en dÛlares (utilizando el tipo de cambio nominal de compra promedio del mes)
+#Convirtiendo a Lempiras variables medidas en d√≥lares (utilizando el tipo de cambio nominal de compra promedio del mes)
 
 data$impor   <- data$import  * data$tcn
 data$reme    <- data$remesas * data$tcn
@@ -43,7 +43,7 @@ data$m2_defl      <- (data$m2     /data$ipc) * 100
 data$credito_defl <- (data$credito/data$ipc) * 100
 data$import_defl  <- (data$impor  /data$ipc) * 100
 
-#DesestacionalizaciÛn mediante TRAMO SEATS de las variables con estacionalidad
+#Desestacionalizaci√≥n mediante TRAMO SEATS de las variables con estacionalidad
 
 imae    <- ts(data$imae,         start=c(2007,1), freq=12)
 ventas  <- ts(data$ventas_defl,  start=c(2007,1), freq=12)
@@ -72,7 +72,7 @@ data$mwh_sa      <- mwh_l$sa
 remove(gasto, imae, mwh, remesas, ventas)
 rm(gasto_l, imae_l, mwh_l, remesas_l, ventas_l, sa_gasto, sa_imae, sa_mwh, sa_remesas, sa_ventas)
 
-#TransformaciÛn a variaciones interanuales
+#Transformaci√≥n a variaciones interanuales
 
 data <- data %>% mutate(imae_v    = difference(data$imae_sa,      lag=12) / lag(data$imae_sa,      12))
 data <- data %>% mutate(ventas_v  = difference(data$ventas_sa,    lag=12) / lag(data$ventas_sa,    12))
@@ -82,11 +82,11 @@ data <- data %>% mutate(mwh_v     = difference(data$mwh_sa,       lag=12) / lag(
 data <- data %>% mutate(import_v  = difference(data$import_defl,  lag=12) / lag(data$import_defl,  12))
 data <- data %>% mutate(tcr_v     = difference(data$tcr,          lag=12) / lag(data$tcr,          12))
 data <- data %>% mutate(wti_v     = difference(data$wti,          lag=12) / lag(data$wti,          12))
-data <- data %>% mutate(cafe_v    = difference(data$cafÈ,         lag=12) / lag(data$cafÈ,         12))
+data <- data %>% mutate(cafe_v    = difference(data$caf√©,         lag=12) / lag(data$caf√©,         12))
 data <- data %>% mutate(m2_v      = difference(data$m2_defl,      lag=12) / lag(data$m2_defl,      12))
 data <- data %>% mutate(credit_v  = difference(data$credito_defl, lag=12) / lag(data$credito_defl, 12))
 
-#TransformaciÛn a distribuciÛn normal est·ndar declarando las variables como series de tiempo
+#Transformaci√≥n a distribuci√≥n normal est√°ndar declarando las variables como series de tiempo
 
 imae_z   <- (data$imae_v    - mean(data$imae_v,    na.rm = TRUE)) / sd(data$imae_v,    na.rm = TRUE)
 ventas_z <- (data$ventas_v  - mean(data$ventas_v,  na.rm = TRUE)) / sd(data$ventas_v,  na.rm = TRUE)
@@ -108,7 +108,7 @@ data_isre <- ts(data_isre, start = c(2008,1), freq=12)
 remove(imae_z, ventas_z, gasto_z, reme_z, mwh_z, import_z, tcr_z, wti_z, cafe_z, m2_z, credit_z, spread_z)
 
 #=====================================
-#       Gr·ficos Descriptivos
+#       Gr√°ficos Descriptivos
 #=====================================
 
 data_isre_df <- as.data.frame(data_isre)
@@ -116,7 +116,7 @@ fecha <- data$date
 fecha <- fecha[13:168]
 data_isre_df$date <- as.Date(fecha)
 
-#Gr·ficos de las variables estandarizadas a travÈs del tiempo
+#Gr√°ficos de las variables estandarizadas a trav√©s del tiempo
 
 ts_imae <- ggplot(data_isre_df, aes(x=date, y=imae_z)) +
   geom_line(colour="BLUE", alpha = 0.6, size = 1) +
@@ -178,7 +178,7 @@ ts_spread <- ggplot(data_isre_df, aes(x=date, y=spread_z)) +
   geom_hline(yintercept=0, color = "black", size =0.5) +
   xlab("") + ylab("") + theme_light() + theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
-setwd(output) #Guardando los gr·ficos en el directorio 
+setwd(output) #Guardando los gr√°ficos en el directorio 
 
 pdf("ts_imae.pdf", width = 4, height = 4)
 ts_imae
@@ -228,7 +228,7 @@ pdf("ts_spread.pdf", width = 4, height = 4)
 ts_spread
 dev.off()
 
-#Gr·fico de matriz de correlaciÛn
+#Gr√°fico de matriz de correlaci√≥n
 
 corr <- round(cor(data_isre_df[, 1:12]), 1)
 corr_plot <- ggcorrplot(corr, hc.order = TRUE, type = "lower", lab = TRUE)
@@ -238,7 +238,7 @@ corr_plot
 dev.off()
 
 #=======================================================
-#       An·lisis de Componentes Principales (ACP)
+#       An√°lisis de Componentes Principales (ACP)
 #=======================================================
 
 ict.cov   <- cov(data_isre)
@@ -260,10 +260,10 @@ CP10 <- as.matrix(data_isre) %*% ict.acp[,10]
 CP11 <- as.matrix(data_isre) %*% ict.acp[,11]
 CP12 <- as.matrix(data_isre) %*% ict.acp[,12]
 
-#ProporciÛn de Varianza Acumulada
+#Proporci√≥n de Varianza Acumulada
 PVE <- ict.eigen$values / sum(ict.eigen$values) 
 
-#EstimaciÛn del n˙mero Ûptimo de componentes principales para calcular el ICT
+#Estimaci√≥n del n√∫mero √≥ptimo de componentes principales para calcular el ICT
 set.seed(123)                       
 parallel = fa.parallel(data_isre,
                        fm = 'ml',
@@ -278,7 +278,7 @@ para_ict$PC_Simulado    <- parallel$pc.sim
 para_ict$PC_Remuestreo  <- parallel$pc.simr
 para_ict$uno            <- c(1:12)
 
-#Estimaci√≥n del √çndice de COndiciones Tributarias
+#Estimaci√≥n del √çndice de Condiciones Tributarias
 CP     <- cbind(CP1, CP2, CP3)
 lambda <- t(cbind(ict.acp[1], ict.acp[2], ict.acp[3]))
 
@@ -336,7 +336,7 @@ para <- ggplot(para_ict, aes(x=uno)) +
                       breaks = c("PC_Observado", "PC_Simulado", "PC_Remuestreo"),
                       values = c("PC_Observado"="blue", "PC_Simulado"="red", 
                                  "PC_Remuestreo"="green")) +
-        ylab("Valores Propios") + xlab("N√∫mero de Componentes") + theme_classic() + 
+        ylab("Valores Propios") + xlab("N√É¬∫mero de Componentes") + theme_classic() + 
         theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.78,0.78))
 
 pve <- qplot(c(1:12), PVE) +
