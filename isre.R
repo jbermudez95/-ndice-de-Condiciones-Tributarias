@@ -108,7 +108,7 @@ data_isre <- ts(data_isre, start = c(2008,1), freq=12)
 remove(imae_z, ventas_z, gasto_z, reme_z, mwh_z, import_z, tcr_z, wti_z, cafe_z, m2_z, credit_z, spread_z)
 
 #=====================================
-#       Gráficos Descriptivos
+#       Gráfico 9. Descriptivos 
 #=====================================
 
 data_isre_df <- as.data.frame(data_isre)
@@ -228,7 +228,7 @@ pdf("ts_spread.pdf", width = 4, height = 4)
 ts_spread
 dev.off()
 
-#Gráfico de matriz de correlación
+#Gráfico 10 de matriz de correlación
 
 corr <- round(cor(data_isre_df[, 1:12]), 1)
 corr_plot <- ggcorrplot(corr, hc.order = TRUE, type = "lower", lab = TRUE)
@@ -326,6 +326,7 @@ loadingCP2$var <- c("imae", "ventas", "gasto", "reme", "mwh", "import", "tcr", "
 loadingCP3$var <- c("imae", "ventas", "gasto", "reme", "mwh", "import", "tcr", "wti", "cafe", "M2", "credit", "spread")
 
 #Análisis gráfico a partir del ACP para las estimaciones del ICT
+# Gráfico 1
 para <- ggplot(para_ict, aes(x=uno)) +
         geom_line(aes(y=PC_Observado,  colour = "PC_Observado"), size=1) +
         geom_point(aes(y=PC_Observado), colour = "BLUE", size = 1.5) +
@@ -339,6 +340,8 @@ para <- ggplot(para_ict, aes(x=uno)) +
         ylab("Valores Propios") + xlab("NÃºmero de Componentes") + theme_classic() + 
         theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.78,0.78))
 
+
+# Gráfico 2a
 pve <- qplot(c(1:12), PVE) +
        geom_line(colour="BLUE", linetype = "dotted", size = 1.2) +
        geom_point(colour="BLUE", size=3) +
@@ -349,6 +352,8 @@ pve <- qplot(c(1:12), PVE) +
        theme_classic() +
        theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
+
+# Gráfico 2b
 pve_cum <- qplot(c(1:12), cumsum(PVE)) +
            geom_line(colour="BLUE", linetype = "dotted", size = 1.2) +
            geom_point(colour="BLUE", size=3) +
@@ -359,6 +364,7 @@ pve_cum <- qplot(c(1:12), cumsum(PVE)) +
            theme_classic() +
            theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
+# Gráfico 3
 ict <- ggplot(ICT, aes(x=date, y=ICT)) +
        geom_hline(yintercept=0, color = "black", size =0.5) +
        geom_hline(yintercept=1, color = "red", linetype="dashed", size =0.5) +
@@ -366,6 +372,7 @@ ict <- ggplot(ICT, aes(x=date, y=ICT)) +
        geom_area(fill="blue2", alpha = 0.6, size = 1) +
        xlab("") + ylab("") + theme_classic() + theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5)) 
 
+# Gráfico 6
 ict_cp1 <- ggplot() + geom_bar(data = dataicp, aes(x=date, y=value, fill=var), stat = 'identity') +
            geom_hline(yintercept=0, color = "black", size =0.5) +
            xlab("") + ylab("") + theme_classic() + 
@@ -374,7 +381,7 @@ ict_cp1 <- ggplot() + geom_bar(data = dataicp, aes(x=date, y=value, fill=var), s
                  legend.position="bottom", legend.direction="horizontal", 
                  legend.title = element_blank(), legend.margin=margin(0,0,0,0),
                  legend.box.margin=margin(-10,-10,-10,-10)) 
-
+# Grafico 4
 ict_var <- ggplot() + geom_bar(data = dataicp1, aes(x=date, y=val, fill=var), stat = 'identity') +
            geom_hline(yintercept=0, color = "black", size =0.5) +
            xlab("") + ylab("") + theme_classic() + 
@@ -384,6 +391,7 @@ ict_var <- ggplot() + geom_bar(data = dataicp1, aes(x=date, y=val, fill=var), st
                  legend.title = element_blank(), legend.margin=margin(0,0,0,0),
                  legend.box.margin=margin(-2,-2,-2,-2))
 
+# Gráfico 5
 ict_sector <- ggplot() + geom_bar(data = dataicp2, aes(x=date, y=value, fill=var), stat = 'identity') +
               geom_hline(yintercept=0, color = "black", size =0.5) +
               xlab("") + ylab("") + theme_classic() + 
@@ -563,6 +571,7 @@ rectangle2 <- data.frame(xmin = as.Date(c("2020-03-01")),
                          xmax = as.Date(c("2020-12-01")),
                          ymin = -Inf, ymax = Inf)
 
+# Gráfico 7
 hechos <- ggplot() + geom_rect(data = rectangle, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
                                 fill = "gray95", alpha = 0.5) +
           geom_rect(data = rectangle1, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
@@ -577,6 +586,7 @@ hechos <- ggplot() + geom_rect(data = rectangle, aes(xmin = xmin, xmax = xmax, y
                               values = c("itrib_z"="red", "ICT"="blue")) + theme_classic() +
           theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.75,0.2))
 
+# Gráfico 8a
 h_dire <- ggplot() + 
           geom_line(data = ICT, aes(x = date, y = dire_z, colour="dire_z"), size = 1) +
           geom_line(data = ICT, aes(x = date, y = ICT, colour="ICT"), size = 1) +
@@ -586,6 +596,7 @@ h_dire <- ggplot() +
                               values = c("dire_z"="red", "ICT"="blue")) + theme_classic() +
           theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.75,0.2))
 
+# Gráfico 8b
 h_isv <- ggplot() + 
          geom_line(data = ICT, aes(x = date, y = isv_z, colour="isv_z"), size = 1) +
          geom_line(data = ICT, aes(x = date, y = ICT, colour="ICT"), size = 1) +
@@ -595,6 +606,7 @@ h_isv <- ggplot() +
                       values = c("isv_z"="red", "ICT"="blue")) + theme_classic() +
          theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.75,0.2))
 
+# Gráfico 8c
 h_acpv <- ggplot() + 
           geom_line(data = ICT, aes(x = date, y = acpv_z, colour="acpv_z"), size = 1) +
           geom_line(data = ICT, aes(x = date, y = ICT, colour="ICT"), size = 1) +
@@ -604,6 +616,7 @@ h_acpv <- ggplot() +
                               values = c("acpv_z"="red", "ICT"="blue")) + theme_classic() +
           theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.75,0.2))
 
+# Gráfico 8d
 h_dai <- ggplot() + 
          geom_line(data = ICT, aes(x = date, y = dai_z, colour="dai_z"), size = 1) +
          geom_line(data = ICT, aes(x = date, y = ICT, colour="ICT"), size = 1) +
@@ -613,6 +626,7 @@ h_dai <- ggplot() +
                             values = c("dai_z"="red", "ICT"="blue")) + theme_classic() +
          theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.75,0.2))
 
+# Gráfico 8e
 h_resto <- ggplot() + 
            geom_line(data = ICT, aes(x = date, y = resto_z, colour="resto_z"), size = 1) +
            geom_line(data = ICT, aes(x = date, y = ICT, colour="ICT"), size = 1) +
