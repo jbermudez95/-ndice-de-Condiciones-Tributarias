@@ -1,7 +1,7 @@
 #Nombre:        isre.R
-#Descripci√≥n:   Estimaci√≥n del Indicador de Condiciones Tributarias para Honduras (ICT)
-#Elaborado por: Jose Carlo Berm√∫dez
-#Instituci√≥n:   Servicio de Administraci√≥n de Rentas, Departamento de Estudios Fiscales y Econ√≥micos
+#DescripciÛn:   EstimaciÛn del Indicador de Condiciones Tributarias para Honduras (ICT)
+#Elaborado por: Jose Carlo Berm˙dez
+#InstituciÛn:   Servicio de AdministraciÛn de Rentas, Departamento de Estudios Fiscales y EconÛmicos
 #Modificado:    23/7/2021
 
 library(ggplot2)
@@ -22,14 +22,14 @@ library(zoo)
 library(forecast)
 
 #===========================================
-#       Preparaci√≥n de los Datos
+#       PreparaciÛn de los Datos
 #===========================================
 
-setwd("C:/Users/Owner/Desktop/2021/Notas t√©cnicas y papers/Indicador de recaudaci√≥n/estimaciones/isre")
-output <- paste0("C:/Users/Owner/Desktop/2021/Notas t√©cnicas y papers/Indicador de recaudaci√≥n/estimaciones")
+setwd("C:/Users/Owner/Desktop/2021/Notas tÈcnicas y papers/Indicador de recaudaciÛn/estimaciones/isre")
+output <- paste0("C:/Users/Owner/Desktop/2021/Notas tÈcnicas y papers/Indicador de recaudaciÛn/estimaciones")
 data   <- read_excel("data_isre.xlsx")
 
-#Convirtiendo a Lempiras variables medidas en d√≥lares (utilizando el tipo de cambio nominal de compra promedio del mes)
+#Convirtiendo a Lempiras variables medidas en dÛlares (utilizando el tipo de cambio nominal de compra promedio del mes)
 
 data$impor   <- data$import  * data$tcn
 data$reme    <- data$remesas * data$tcn
@@ -43,7 +43,7 @@ data$m2_defl      <- (data$m2     /data$ipc) * 100
 data$credito_defl <- (data$credito/data$ipc) * 100
 data$import_defl  <- (data$impor  /data$ipc) * 100
 
-#Desestacionalizaci√≥n mediante TRAMO SEATS de las variables con estacionalidad
+#DesestacionalizaciÛn mediante TRAMO SEATS de las variables con estacionalidad
 
 imae    <- ts(data$imae,         start=c(2007,1), freq=12)
 ventas  <- ts(data$ventas_defl,  start=c(2007,1), freq=12)
@@ -72,7 +72,7 @@ data$mwh_sa      <- mwh_l$sa
 remove(gasto, imae, mwh, remesas, ventas)
 rm(gasto_l, imae_l, mwh_l, remesas_l, ventas_l, sa_gasto, sa_imae, sa_mwh, sa_remesas, sa_ventas)
 
-#Transformaci√≥n a variaciones interanuales
+#TransformaciÛn a variaciones interanuales
 
 data <- data %>% mutate(imae_v    = difference(data$imae_sa,      lag=12) / lag(data$imae_sa,      12))
 data <- data %>% mutate(ventas_v  = difference(data$ventas_sa,    lag=12) / lag(data$ventas_sa,    12))
@@ -82,11 +82,11 @@ data <- data %>% mutate(mwh_v     = difference(data$mwh_sa,       lag=12) / lag(
 data <- data %>% mutate(import_v  = difference(data$import_defl,  lag=12) / lag(data$import_defl,  12))
 data <- data %>% mutate(tcr_v     = difference(data$tcr,          lag=12) / lag(data$tcr,          12))
 data <- data %>% mutate(wti_v     = difference(data$wti,          lag=12) / lag(data$wti,          12))
-data <- data %>% mutate(cafe_v    = difference(data$caf√©,         lag=12) / lag(data$caf√©,         12))
+data <- data %>% mutate(cafe_v    = difference(data$cafÈ,         lag=12) / lag(data$cafÈ,         12))
 data <- data %>% mutate(m2_v      = difference(data$m2_defl,      lag=12) / lag(data$m2_defl,      12))
 data <- data %>% mutate(credit_v  = difference(data$credito_defl, lag=12) / lag(data$credito_defl, 12))
 
-#Transformaci√≥n a distribuci√≥n normal est√°ndar declarando las variables como series de tiempo
+#TransformaciÛn a distribuciÛn normal est·ndar declarando las variables como series de tiempo
 
 imae_z   <- (data$imae_v    - mean(data$imae_v,    na.rm = TRUE)) / sd(data$imae_v,    na.rm = TRUE)
 ventas_z <- (data$ventas_v  - mean(data$ventas_v,  na.rm = TRUE)) / sd(data$ventas_v,  na.rm = TRUE)
@@ -108,15 +108,15 @@ data_isre <- ts(data_isre, start = c(2008,1), freq=12)
 remove(imae_z, ventas_z, gasto_z, reme_z, mwh_z, import_z, tcr_z, wti_z, cafe_z, m2_z, credit_z, spread_z)
 
 #=====================================
-#       Gr√°fico 9. Descriptivos 
+#       Gr·fico 9. Descriptivos 
 #=====================================
 
 data_isre_df <- as.data.frame(data_isre)
 fecha <- data$date
-fecha <- fecha[13:168]
+fecha <- fecha[13:length(fecha)]
 data_isre_df$date <- as.Date(fecha)
 
-#Gr√°ficos de las variables estandarizadas a trav√©s del tiempo
+#Gr·ficos de las variables estandarizadas a travÈs del tiempo
 
 ts_imae <- ggplot(data_isre_df, aes(x=date, y=imae_z)) +
   geom_line(colour="BLUE", alpha = 0.6, size = 1) +
@@ -178,7 +178,7 @@ ts_spread <- ggplot(data_isre_df, aes(x=date, y=spread_z)) +
   geom_hline(yintercept=0, color = "black", size =0.5) +
   xlab("") + ylab("") + theme_light() + theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
-setwd(output) #Guardando los gr√°ficos en el directorio 
+setwd(output) #Guardando los gr·ficos en el directorio 
 
 pdf("ts_imae.pdf", width = 4, height = 4)
 ts_imae
@@ -238,7 +238,7 @@ corr_plot
 dev.off()
 
 #=======================================================
-#       An√°lisis de Componentes Principales (ACP)
+#       An·lisis de Componentes Principales (ACP)
 #=======================================================
 
 ict.cov   <- cov(data_isre)
@@ -260,10 +260,10 @@ CP10 <- as.matrix(data_isre) %*% ict.acp[,10]
 CP11 <- as.matrix(data_isre) %*% ict.acp[,11]
 CP12 <- as.matrix(data_isre) %*% ict.acp[,12]
 
-#Proporci√≥n de Varianza Acumulada
+#ProporciÛn de Varianza Acumulada
 PVE <- ict.eigen$values / sum(ict.eigen$values) 
 
-#Estimaci√≥n del n√∫mero √≥ptimo de componentes principales para calcular el ICT
+#EstimaciÛn del n˙mero Ûptimo de componentes principales para calcular el ICT
 set.seed(123)                       
 parallel = fa.parallel(data_isre,
                        fm = 'ml',
@@ -278,7 +278,7 @@ para_ict$PC_Simulado    <- parallel$pc.sim
 para_ict$PC_Remuestreo  <- parallel$pc.simr
 para_ict$uno            <- c(1:12)
 
-#Estimaci√≥n del √çndice de Condiciones Tributarias
+#EstimaciÛn del Õndice de Condiciones Tributarias
 CP     <- cbind(CP1, CP2, CP3)
 lambda <- t(cbind(ict.acp[1], ict.acp[2], ict.acp[3]))
 
@@ -286,7 +286,7 @@ ICT      <- as.data.frame(CP %*% lambda)
 names(ICT)[names(ICT) == "V1"] <- "ICT"
 ICT$date <- data_isre_df$date
 
-#Descomposici√≥n del √çndice de COndiciones Tributarias por 3 primeros Componentes Principales 
+#DescomposiciÛn del Õndice de COndiciones Tributarias por 3 primeros Componentes Principales 
 share       = t(ict.eigen$values[1:3] / sum(ict.eigen$values[1:3]))
 ict_cp      = as.data.frame(ICT$ICT %*% share)
 ict_cp$ICT  = ICT$ICT
@@ -297,7 +297,7 @@ names(ict_cp)[names(ict_cp) == "V3"] <- "CP3"
 write.xlsx(ict_cp, "dataicp,xlsx")           #Exporto y manipulo la base manualmente para ordenarla 
 dataicp   <- read_excel("dataicp.xlsx") 
 
-#Descomposici√≥n del √çndice de Condiciones Tributarias por cada Variable
+#Descomposici√≥n del Õndice de Condiciones Tributarias por cada Variable
 media_var    <- rowMeans(ict.acp[,1:3])
 share1       <- t(media_var / sum(media_var))
 ict_var      <- as.data.frame(ICT$ICT %*% share1)
@@ -305,7 +305,7 @@ ict_var$date <- ICT$date
 write.xlsx(ict_var, "dataicp1.xlsx")         #Exporto y manipulo la base manualmente para ordenarla
 dataicp1   <- read_excel("dataicp1.xlsx")
 
-#Descomposici√≥n del √çndice de Condiciones Tributarias por cada sector econ√≥mico
+#DescomposiciÛn del Õndice de Condiciones Tributarias por cada sector econÛmico
 Real         <- media_var[1] + media_var[2] + media_var[5]                                
 Externo      <- media_var[4] + media_var[6] + media_var[7] + media_var[8] + media_var[9]   
 Financiero   <- media_var[10] + media_var[11] + media_var[12]
@@ -325,8 +325,8 @@ loadingCP1$var <- c("imae", "ventas", "gasto", "reme", "mwh", "import", "tcr", "
 loadingCP2$var <- c("imae", "ventas", "gasto", "reme", "mwh", "import", "tcr", "wti", "cafe", "M2", "credit", "spread")
 loadingCP3$var <- c("imae", "ventas", "gasto", "reme", "mwh", "import", "tcr", "wti", "cafe", "M2", "credit", "spread")
 
-#An√°lisis gr√°fico a partir del ACP para las estimaciones del ICT
-# Gr√°fico 1
+#An·lisis gra·fico a partir del ACP para las estimaciones del ICT
+# Gr·fico 1
 para <- ggplot(para_ict, aes(x=uno)) +
         geom_line(aes(y=PC_Observado,  colour = "PC_Observado"), size=1) +
         geom_point(aes(y=PC_Observado), colour = "BLUE", size = 1.5) +
@@ -341,7 +341,7 @@ para <- ggplot(para_ict, aes(x=uno)) +
         theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.78,0.78))
 
 
-# Gr√°fico 2a
+# Gr·fico 2a
 pve <- qplot(c(1:12), PVE) +
        geom_line(colour="BLUE", linetype = "dotted", size = 1.2) +
        geom_point(colour="BLUE", size=3) +
@@ -353,7 +353,7 @@ pve <- qplot(c(1:12), PVE) +
        theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
 
-# Gr√°fico 2b
+# Gr·fico 2b
 pve_cum <- qplot(c(1:12), cumsum(PVE)) +
            geom_line(colour="BLUE", linetype = "dotted", size = 1.2) +
            geom_point(colour="BLUE", size=3) +
@@ -364,7 +364,7 @@ pve_cum <- qplot(c(1:12), cumsum(PVE)) +
            theme_classic() +
            theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5))
 
-# Gr√°fico 3
+# Gr·fico 3
 ict <- ggplot(ICT, aes(x=date, y=ICT)) +
        geom_hline(yintercept=0, color = "black", size =0.5) +
        geom_hline(yintercept=1, color = "red", linetype="dashed", size =0.5) +
@@ -372,7 +372,7 @@ ict <- ggplot(ICT, aes(x=date, y=ICT)) +
        geom_area(fill="blue2", alpha = 0.6, size = 1) +
        xlab("") + ylab("") + theme_classic() + theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5)) 
 
-# Gr√°fico 6
+# Gr·fico 6
 ict_cp1 <- ggplot() + geom_bar(data = dataicp, aes(x=date, y=value, fill=var), stat = 'identity') +
            geom_hline(yintercept=0, color = "black", size =0.5) +
            xlab("") + ylab("") + theme_classic() + 
@@ -391,7 +391,7 @@ ict_var <- ggplot() + geom_bar(data = dataicp1, aes(x=date, y=val, fill=var), st
                  legend.title = element_blank(), legend.margin=margin(0,0,0,0),
                  legend.box.margin=margin(-2,-2,-2,-2))
 
-# Gr√°fico 5
+# Gr·fico 5
 ict_sector <- ggplot() + geom_bar(data = dataicp2, aes(x=date, y=value, fill=var), stat = 'identity') +
               geom_hline(yintercept=0, color = "black", size =0.5) +
               xlab("") + ylab("") + theme_classic() + 
@@ -507,14 +507,14 @@ acpv_ma  <- rollmean(data_itrib$acpv_v,  12)
 dai_ma   <- rollmean(data_itrib$dai_v,   12)
 resto_ma <- rollmean(data_itrib$resto_v, 12)
 
-ICT$itrib_ma <- itrib_ma[13:168]
-ICT$dire_ma  <- dire_ma[13:168]
-ICT$isv_ma   <- isv_ma[13:168]
-ICT$acpv_ma  <- acpv_ma[13:168]
-ICT$dai_ma   <- dai_ma[13:168]
-ICT$resto_ma <- resto_ma[13:168]
+ICT$itrib_ma <- itrib_ma[13:length(itrib_ma)]
+ICT$dire_ma  <- dire_ma[13:length(dire_ma)]
+ICT$isv_ma   <- isv_ma[13:length(isv_ma)]
+ICT$acpv_ma  <- acpv_ma[13:length(acpv_ma)]
+ICT$dai_ma   <- dai_ma[13:length(dai_ma)]
+ICT$resto_ma <- resto_ma[13:length(resto_ma)]
 
-#Correlaciones Din√°micas y Desviaciones Est√°ndar de los Par√°metros
+#Correlaciones Din·micas y Desviaciones Est·ndar de los Par·metros
 
 corr1 <- ccf(ICT$ICT, ICT$itrib_ma, lag.max = 12, type = c("correlation"), plot = FALSE)
 corr2 <- ccf(ICT$ICT, ICT$dire_ma,  lag.max = 12, type = c("correlation"), plot = FALSE)
@@ -571,7 +571,7 @@ rectangle2 <- data.frame(xmin = as.Date(c("2020-03-01")),
                          xmax = as.Date(c("2020-12-01")),
                          ymin = -Inf, ymax = Inf)
 
-# Gr√°fico 7
+# Grafico 7
 hechos <- ggplot() + geom_rect(data = rectangle, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
                                 fill = "gray95", alpha = 0.5) +
           geom_rect(data = rectangle1, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
@@ -586,7 +586,7 @@ hechos <- ggplot() + geom_rect(data = rectangle, aes(xmin = xmin, xmax = xmax, y
                               values = c("itrib_z"="red", "ICT"="blue")) + theme_classic() +
           theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.75,0.2))
 
-# Gr√°fico 8a
+# Grafico 8a
 h_dire <- ggplot() + 
           geom_line(data = ICT, aes(x = date, y = dire_z, colour="dire_z"), size = 1) +
           geom_line(data = ICT, aes(x = date, y = ICT, colour="ICT"), size = 1) +
@@ -596,7 +596,7 @@ h_dire <- ggplot() +
                               values = c("dire_z"="red", "ICT"="blue")) + theme_classic() +
           theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.75,0.2))
 
-# Gr√°fico 8b
+# Grafico 8b
 h_isv <- ggplot() + 
          geom_line(data = ICT, aes(x = date, y = isv_z, colour="isv_z"), size = 1) +
          geom_line(data = ICT, aes(x = date, y = ICT, colour="ICT"), size = 1) +
@@ -606,7 +606,7 @@ h_isv <- ggplot() +
                       values = c("isv_z"="red", "ICT"="blue")) + theme_classic() +
          theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.75,0.2))
 
-# Gr√°fico 8c
+# Grafico 8c
 h_acpv <- ggplot() + 
           geom_line(data = ICT, aes(x = date, y = acpv_z, colour="acpv_z"), size = 1) +
           geom_line(data = ICT, aes(x = date, y = ICT, colour="ICT"), size = 1) +
@@ -616,7 +616,7 @@ h_acpv <- ggplot() +
                               values = c("acpv_z"="red", "ICT"="blue")) + theme_classic() +
           theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.75,0.2))
 
-# Gr√°fico 8d
+# Grafico 8d
 h_dai <- ggplot() + 
          geom_line(data = ICT, aes(x = date, y = dai_z, colour="dai_z"), size = 1) +
          geom_line(data = ICT, aes(x = date, y = ICT, colour="ICT"), size = 1) +
@@ -626,7 +626,7 @@ h_dai <- ggplot() +
                             values = c("dai_z"="red", "ICT"="blue")) + theme_classic() +
          theme(panel.border = element_rect(colour = "black", fill=NA, size=0.5), legend.position = c(0.75,0.2))
 
-# Gr√°fico 8e
+# Grafico 8e
 h_resto <- ggplot() + 
            geom_line(data = ICT, aes(x = date, y = resto_z, colour="resto_z"), size = 1) +
            geom_line(data = ICT, aes(x = date, y = ICT, colour="ICT"), size = 1) +
@@ -663,10 +663,10 @@ h_resto
 dev.off() 
 
 #=======================================================
-#               An√°lisis de Pron√≥stico
+#               An·lisis de PronÛstico
 #=======================================================
 
-# Preparaci√≥n de las bases para estimar los modelos y las pruebas en Stata
+# PreparaciÛn de las bases para estimar los modelos y las pruebas en Stata
 
 Y <- data.frame("ict" = ICT$ICT, "itrib" = data_itrib$itrib_v[25:180], 
                 "imae" =data$imae_v[13:168], "mwh" = data$mwh_v[13:168], "date" = data$date[13:168])
